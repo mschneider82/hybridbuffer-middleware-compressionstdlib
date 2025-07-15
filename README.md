@@ -12,7 +12,10 @@ This package provides compression middleware for HybridBuffer using standard Go 
 ## Usage
 
 ```go
-import "schneider.vip/hybridbuffer/middleware/compression"
+import (
+    "schneider.vip/hybridbuffer"
+    "schneider.vip/hybridbuffer/middleware/compression"
+)
 
 // Basic gzip compression
 gzipMiddleware := compression.New(compression.Gzip)
@@ -30,14 +33,18 @@ zlibMiddleware := compression.New(compression.Zlib,
 // Use with HybridBuffer
 buf := hybridbuffer.New(
     hybridbuffer.WithMiddleware(gzipMiddleware),
-    hybridbuffer.WithStorage(someStorage),
 )
+defer buf.Close()
 ```
 
 ### Combined with Other Middleware
 
 ```go
-import "schneider.vip/hybridbuffer/middleware/encryption"
+import (
+    "schneider.vip/hybridbuffer"
+    "schneider.vip/hybridbuffer/middleware/compression"
+    "schneider.vip/hybridbuffer/middleware/encryption"
+)
 
 // Combine compression and encryption
 buf := hybridbuffer.New(
@@ -46,6 +53,7 @@ buf := hybridbuffer.New(
         encryption.New(),
     ),
 )
+defer buf.Close()
 ```
 
 ## Algorithms
@@ -76,11 +84,19 @@ Sets the compression level from 1-9:
 fastGzip := compression.New(compression.Gzip,
     compression.WithLevel(1),
 )
+buf := hybridbuffer.New(
+    hybridbuffer.WithMiddleware(fastGzip),
+)
+defer buf.Close()
 
 // Maximum compression  
 maxGzip := compression.New(compression.Gzip,
     compression.WithLevel(9),
 )
+buf2 := hybridbuffer.New(
+    hybridbuffer.WithMiddleware(maxGzip),
+)
+defer buf2.Close()
 ```
 
 ## Performance Characteristics
@@ -148,6 +164,10 @@ Compression middleware handles various error conditions:
 fastCompression := compression.New(compression.Zlib,
     compression.WithLevel(1),
 )
+buf := hybridbuffer.New(
+    hybridbuffer.WithMiddleware(fastCompression),
+)
+defer buf.Close()
 ```
 
 ### Storage-Optimized Scenario  
@@ -155,6 +175,10 @@ fastCompression := compression.New(compression.Zlib,
 maxCompression := compression.New(compression.Gzip,
     compression.WithLevel(9),
 )
+buf := hybridbuffer.New(
+    hybridbuffer.WithMiddleware(maxCompression),
+)
+defer buf.Close()
 ```
 
 ### Balanced General Purpose
@@ -162,6 +186,10 @@ maxCompression := compression.New(compression.Gzip,
 balancedCompression := compression.New(compression.Gzip,
     compression.WithLevel(6),
 )
+buf := hybridbuffer.New(
+    hybridbuffer.WithMiddleware(balancedCompression),
+)
+defer buf.Close()
 ```
 
 ## Dependencies
