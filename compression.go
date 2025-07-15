@@ -4,9 +4,9 @@ package compressionstdlib
 import (
 	"compress/gzip"
 	"compress/zlib"
+	"fmt"
 	"io"
 
-	"github.com/pkg/errors"
 	"schneider.vip/hybridbuffer/middleware"
 )
 
@@ -107,7 +107,7 @@ func (w *gzipWriteCloser) Write(p []byte) (n int, err error) {
 
 func (w *gzipWriteCloser) Close() error {
 	if err := w.Writer.Close(); err != nil {
-		return errors.Wrap(err, "failed to close gzip writer")
+		return fmt.Errorf("failed to close gzip writer: %w", err)
 	}
 	return nil
 }
@@ -123,7 +123,7 @@ func (w *zlibWriteCloser) Write(p []byte) (n int, err error) {
 
 func (w *zlibWriteCloser) Close() error {
 	if err := w.Writer.Close(); err != nil {
-		return errors.Wrap(err, "failed to close zlib writer")
+		return fmt.Errorf("failed to close zlib writer: %w", err)
 	}
 	return nil
 }
